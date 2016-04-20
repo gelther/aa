@@ -8,10 +8,10 @@
 $ad_groups_list = new Advanced_Ads_Groups_List();
 
 // save updated groups
-if ( isset($_REQUEST['advads-group-update-nonce']) ){
+if ( isset( $_REQUEST['advads-group-update-nonce'] ) ) {
 	$udpate_result = $ad_groups_list->update_groups();
 	// display error message
-	if ( is_wp_error( $udpate_result ) ){
+	if ( is_wp_error( $udpate_result ) ) {
 		$error_string = $udpate_result->get_error_message();
 		echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
 	} else {
@@ -42,18 +42,18 @@ if ( isset($_REQUEST['message']) && ( $msg = (int) $_REQUEST['message'] ) || iss
 <div class="wrap nosubsub">
     <h1><?php
 		echo esc_html( $title );
-	if ( ! empty($_REQUEST['s']) ) {
+	if ( ! empty( $_REQUEST['s'] ) ) {
 		printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;', 'advanced-ads' ) . '</span>', esc_html( wp_unslash( $_REQUEST['s'] ) ) );
 	} else {
-		echo ' <a href="' . Advanced_Ads_Admin::group_page_url( array('action' => 'edit') ) . '" class="add-new-h2">' . $tax->labels->add_new_item . '</a>';
+		echo ' <a href="' . Advanced_Ads_Admin::group_page_url( array( 'action' => 'edit' ) ) . '" class="add-new-h2">' . $tax->labels->add_new_item . '</a>';
 	}
 		?>
     </h1>
     <p><?php _e( 'Ad Groups are a very flexible method to bundle ads. You can use them to display random ads in the frontend or run split tests, but also just for informational purposes. Not only can an Ad Groups have multiple ads, but an ad can belong to multiple ad groups.', 'advanced-ads' ); ?></p>
-    <?php if ( isset($message) ) : ?>
+    <?php if ( isset( $message ) ) : ?>
         <div id="message" class="updated"><p><?php echo $message; ?></p></div>
         <?php
-		$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg( array('message'), $_SERVER['REQUEST_URI'] ) );
+		$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg( array( 'message' ), $_SERVER['REQUEST_URI'] ) );
 	endif;
 	?>
     <div id="ajax-response"></div>
