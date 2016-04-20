@@ -102,7 +102,6 @@ class Advanced_Ads_Group {
 	 * @param array   $ad_args optional arguments passed to ads
 	 */
 	public function __construct( $group, $ad_args = array() ) {
-
 		$this->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
 
 		$group = get_term( $group, $this->taxonomy );
@@ -122,12 +121,12 @@ class Advanced_Ads_Group {
 	 * @param array $ad_args optional arguments passed to ads
 	 */
 	private function load( $group, $ad_args ) {
-		$this->id = $group->term_id;
-		$this->name = $group->name;
-		$this->slug = $group->slug;
+		$this->id          = $group->term_id;
+		$this->name        = $group->name;
+		$this->slug        = $group->slug;
 		$this->description = $group->description;
-		$this->post_type = Advanced_Ads::POST_TYPE_SLUG;
-		$this->ad_args = $ad_args;
+		$this->post_type   = Advanced_Ads::POST_TYPE_SLUG;
+		$this->ad_args     = $ad_args;
 
 		$this->load_additional_attributes();
 	}
@@ -159,20 +158,20 @@ class Advanced_Ads_Group {
 	 * control the output of the group by type and amount of ads
 	 *
 	 * @since 1.4.8
-	 * @param array/null ordered_ad_ids ordered ids of the ads that belong to the group
-	 * @return str $output output of ad(s) by ad
+	 * @param  array/null         ordered_ad_ids ordered ids of the ads that belong to the group
+	 * @return str        $output output of ad(s) by ad
 	 */
 	public function output( $ordered_ad_ids = false ) {
 		// if $ordered_ad_ids was not passed to the function, load it
 		$ordered_ad_ids = ( $ordered_ad_ids === false ) ? $this->get_ordered_ad_ids() : $ordered_ad_ids;
-		if ( $ordered_ad_ids === null  ) {
+		if ( $ordered_ad_ids === null ) {
 			return;
 		}
 
 		// load the ad output
-		$output = array();
+		$output        = array();
 		$ads_displayed = 0;
-		$ad_count = apply_filters( 'advanced-ads-group-ad-count', $this->ad_count, $this );
+		$ad_count      = apply_filters( 'advanced-ads-group-ad-count', $this->ad_count, $this );
 
 		$ad_select = Advanced_Ads_Select::get_instance();
 		foreach ( $ordered_ad_ids as $_ad_id ) {
@@ -182,15 +181,15 @@ class Advanced_Ads_Group {
 				$output[] = $ad;
 				$ads_displayed++;
 				// break the loop when maximum ads are reached
-				if( $ads_displayed === $ad_count ) {
+				if ( $ads_displayed === $ad_count ) {
 					break;
 				}
 			}
 		}
 
 		// add the group to the global output array
-		$advads = Advanced_Ads::get_instance();
-		$advads->current_ads[] = array('type' => 'group', 'id' => $this->id, 'title' => $this->name);
+		$advads                = Advanced_Ads::get_instance();
+		$advads->current_ads[] = array( 'type' => 'group', 'id' => $this->id, 'title' => $this->name );
 
 		// filter grouped ads output
 		$output_string = implode( '', apply_filters( 'advanced-ads-group-output-array', $output, $this ) );
@@ -217,7 +216,7 @@ class Advanced_Ads_Group {
 
 		// get ad weights serving as an order here
 		$weights = $this->get_ad_weights();
-		asort($weights);
+		asort( $weights );
 
 		// if ads and weights don’t have the same keys, update weights array
 		if ( (count( $weights ) == 0 && count( $ads ) > 0) || count( $weights ) != count( $ads ) || array_diff_key( $weights, $ads ) != array()
@@ -227,25 +226,25 @@ class Advanced_Ads_Group {
 		}
 
 				// remove ads with 0 ad weight
-		foreach( $weights as $_ad_id => $_ad_weight ){
-			if( $_ad_weight === 0 ){
+		foreach ( $weights as $_ad_id => $_ad_weight ) {
+			if ( $_ad_weight === 0 ) {
 				unset( $weights[ $_ad_id ] );
 			}
 		}
 
 		// order ads based on group type
-		switch($this->type){
+		switch ( $this->type ) {
 			case 'ordered' :
 				// order to highest weight first
 				arsort( $weights );
-				$ordered_ad_ids = array_keys($weights);
+				$ordered_ad_ids = array_keys( $weights );
 				break;
 			default : // default
-				$ordered_ad_ids = $this->shuffle_ads($ads, $weights);
+				$ordered_ad_ids = $this->shuffle_ads( $ads, $weights );
 		}
 
 		return apply_filters( 'advanced-ads-group-output-ad-ids', $ordered_ad_ids, $this->type, $ads, $weights );
-	}	
+	}
 
 	/**
 	 * return all ads from this group
@@ -254,8 +253,7 @@ class Advanced_Ads_Group {
 	 */
 	public function get_all_ads() {
 		if ( count( $this->ads ) > 0 ) {
-			return $this->ads; }
-		else {
+			return $this->ads; } else {
 			return $this->load_all_ads(); }
 	}
 
@@ -268,7 +266,6 @@ class Advanced_Ads_Group {
 	 * @return arr $ads array with ad (post) objects
 	 */
 	private function load_all_ads() {
-
 		if ( ! $this->id ) {
 			return array();
 		}
@@ -278,17 +275,17 @@ class Advanced_Ads_Group {
 
 		// much more complex than needed: one of the three queries is not needed and the last query gets slow quiet fast
 		$args = array(
-			'post_type' => $this->post_type,
-			'post_status' => 'publish',
+			'post_type'      => $this->post_type,
+			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'taxonomy' => $this->taxonomy,
-			'term' => $this->slug,
-			'orderby' => 'id' // might want to avoid sorting as not needed for most calls and fast in PHP; slight I/O blocking concern
+			'taxonomy'       => $this->taxonomy,
+			'term'           => $this->slug,
+			'orderby'        => 'id' // might want to avoid sorting as not needed for most calls and fast in PHP; slight I/O blocking concern
 		);
 
 		$found = false;
-		$key = 'ad_group_all_ads_' . $this->post_type . '_' . $this->taxonomy . '_' . $this->slug;
-		$ads = wp_cache_get( $key, Advanced_Ads_Model::OBJECT_CACHE_GROUP, false, $found );
+		$key   = 'ad_group_all_ads_' . $this->post_type . '_' . $this->taxonomy . '_' . $this->slug;
+		$ads   = wp_cache_get( $key, Advanced_Ads_Model::OBJECT_CACHE_GROUP, false, $found );
 		if ( $found ) {
 			$this->ads = $ads;
 		} else {
@@ -296,7 +293,7 @@ class Advanced_Ads_Group {
 
 			if ( $ads->have_posts() ) {
 				$this->ads = $this->add_post_ids( $ads->posts );
-				wp_cache_set( $key, $this->ads, Advanced_Ads_Model::OBJECT_CACHE_GROUP, Advanced_Ads_Model::OBJECT_CACHE_TTL);
+				wp_cache_set( $key, $this->ads, Advanced_Ads_Model::OBJECT_CACHE_GROUP, Advanced_Ads_Model::OBJECT_CACHE_TTL );
 			}
 		}
 
@@ -307,15 +304,14 @@ class Advanced_Ads_Group {
 	 * use post ids as keys for ad array
 	 *
 	 * @since 1.0.0
-	 * @param arr $ads array with post objects
+	 * @param  arr $ads array with post objects
 	 * @return arr $ads array with post objects with post id as their key
 	 * @todo check, if there isn’t a WP function for this already
 	 */
-	private function add_post_ids(array $ads){
-
+	private function add_post_ids( array $ads ) {
 		$ads_with_id = array();
-		foreach ( $ads as $_ad ){
-			$ads_with_id[$_ad->ID] = $_ad;
+		foreach ( $ads as $_ad ) {
+			$ads_with_id[ $_ad->ID ] = $_ad;
 		}
 
 		return $ads_with_id;
@@ -325,20 +321,19 @@ class Advanced_Ads_Group {
 	 * shuffle ads based on ad weight
 	 *
 	 * @since 1.0.0
-	 * @param arr $ads array with ad objects
-	 * @param arr $weights ad weights
+	 * @param  arr $ads          array with ad objects
+	 * @param  arr $weights      ad weights
 	 * @return arr $shuffled_ads shuffled array with ad ids
 	 */
-	private function shuffle_ads($ads = array(), $weights) {
-
+	private function shuffle_ads( $ads = array(), $weights ) {
 		// get a random ad for every ad there is
 		$shuffled_ads = array();
 		// while non-zero weights are set select random next
 		while ( null !== $random_ad_id = $this->get_random_ad_by_weight( $weights ) ) {
 			// remove chosen ad from weights array
-			unset($weights[$random_ad_id]);
+			unset( $weights[ $random_ad_id ] );
 			// put random ad into shuffled array
-			if ( ! empty($ads[$random_ad_id]) ) {
+			if ( ! empty( $ads[ $random_ad_id ] ) ) {
 				$shuffled_ads[] = $random_ad_id; }
 		}
 
@@ -352,8 +347,7 @@ class Advanced_Ads_Group {
 	 * @param array $ad_weights e.g. array(A => 2, B => 3, C => 5)
 	 * @source applied with fix for order http://stackoverflow.com/a/11872928/904614
 	 */
-	private function get_random_ad_by_weight(array $ad_weights) {
-
+	private function get_random_ad_by_weight( array $ad_weights ) {
 		// use maximum ad weight for ads without this
 		// ads might have a weight of zero (0); to avoid mt_rand fail assume that at least 1 is set.
 		$max = array_sum( $ad_weights );
@@ -380,17 +374,17 @@ class Advanced_Ads_Group {
 		// load and save ad weights if not yet set
 		if ( $this->ad_weights == 0 ) {
 			$weights = get_option( 'advads-ad-weights', array() );
-			if ( isset($weights[$this->id]) ) {
-                            $this->ad_weights = $weights[$this->id];
+			if ( isset( $weights[ $this->id ] ) ) {
+							$this->ad_weights = $weights[ $this->id ];
 			}
 		}
 
 		// return ad weights ordered by weight
-                if(!is_array($this->ad_weights)) {
-                    return array();
-                } else {
-                    return $this->ad_weights;
-                }
+				if ( ! is_array( $this->ad_weights ) ) {
+					return array();
+				} else {
+					return $this->ad_weights;
+				}
 	}
 
 	/**
@@ -399,15 +393,14 @@ class Advanced_Ads_Group {
 	 * @since 1.4.8
 	 * @param arr $args group arguments
 	 */
-	public function save($args = array()) {
-
+	public function save( $args = array() ) {
 		$defaults = array( 'type' => 'default', 'ad_count' => 1, 'options' => array() );
-		$args = wp_parse_args($args, $defaults);
+		$args     = wp_parse_args( $args, $defaults );
 
 		// get global ad group option
 		$groups = get_option( 'advads-ad-groups', array() );
 
-		$groups[$this->id] = $args;
+		$groups[ $this->id ] = $args;
 
 		update_option( 'advads-ad-groups', $groups );
 	}
@@ -418,20 +411,19 @@ class Advanced_Ads_Group {
 	 * @since 1.0.0
 	 * @param arr|str $weights array with ad weights (key: ad id; value: weight)
 	 */
-	public function save_ad_weights($weights = '') {
-
+	public function save_ad_weights( $weights = '' ) {
 		// allow only arrays and empty string
 		if ( ! is_array( $weights ) && $weights = '' ) {
 			return; }
 
 		$global_weights = get_option( 'advads-ad-weights', array() );
 
-		$global_weights[$this->id] = $this->sanitize_ad_weights( $weights );
+		$global_weights[ $this->id ] = $this->sanitize_ad_weights( $weights );
 
 		update_option( 'advads-ad-weights', $global_weights );
 
 		// refresh ad weights after update to avoid conflict
-		$this->ad_weights = $global_weights[$this->id];
+		$this->ad_weights = $global_weights[ $this->id ];
 	}
 
 	/**
@@ -439,18 +431,18 @@ class Advanced_Ads_Group {
 	 *
 	 * @since 1.0.0
 	 */
-	private function update_ad_weights(){
-		$ads = $this->get_all_ads();
+	private function update_ad_weights() {
+		$ads     = $this->get_all_ads();
 		$weights = $this->get_ad_weights();
 
 		$new_weights = array();
 		// use only ads assigned to the group
-		foreach ( $ads as $_ad ){
-			if ( isset($weights[$_ad->ID]) ){
-				$new_weights[$_ad->ID] = $weights[$_ad->ID];
+		foreach ( $ads as $_ad ) {
+			if ( isset( $weights[ $_ad->ID ] ) ) {
+				$new_weights[ $_ad->ID ] = $weights[ $_ad->ID ];
 			} else {
 				// if no weight is given, use maximum default value
-				$new_weights[$_ad->ID] = self::MAX_AD_GROUP_WEIGHT;
+				$new_weights[ $_ad->ID ] = self::MAX_AD_GROUP_WEIGHT;
 			}
 		}
 
@@ -463,16 +455,15 @@ class Advanced_Ads_Group {
 	 * @since 1.0.0
 	 * @param arr $weights ad weights array with (key: ad id; value: weight)
 	 */
-	private function sanitize_ad_weights($weights = array()) {
-
+	private function sanitize_ad_weights( $weights = array() ) {
 		if ( ! is_array( $weights ) ) {
 			return ''; }
 
 		$sanitized_weights = array();
 		foreach ( $weights as $_ad_id => $_weight ) {
-			$_ad_id = absint( $_ad_id );
-			$_weight = absint( $_weight );
-			$sanitized_weights[$_ad_id] = $_weight;
+			$_ad_id                       = absint( $_ad_id );
+			$_weight                      = absint( $_weight );
+			$sanitized_weights[ $_ad_id ] = $_weight;
 		}
 
 		return $sanitized_weights;
