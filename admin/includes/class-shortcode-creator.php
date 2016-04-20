@@ -1,7 +1,6 @@
 <?php
 /**
  * shortcode generator for TinyMCE editor
- *
  */
 class Advanced_Ads_Shortcode_Creator {
 	/**
@@ -30,7 +29,7 @@ class Advanced_Ads_Shortcode_Creator {
 	}
 
 	public function init() {
-		if( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_place_ads') ) ) {
+		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_place_ads' ) ) ) {
 			return;
 		}
 
@@ -44,7 +43,6 @@ class Advanced_Ads_Shortcode_Creator {
 
 	/**
 	 * add the plugin to array of external TinyMCE plugins
-	 *
 	 */
 	public function add_plugin( $plugin_array ) {
 		$plugin_array['advads_shortcode'] = ADVADS_BASE_URL . 'admin/assets/js/shortcode.js';
@@ -53,7 +51,6 @@ class Advanced_Ads_Shortcode_Creator {
 
 	/**
 	 * add button to tinyMCE window
-	 *
 	 */
 	public function register_buttons( $buttons ) {
 		$buttons[] = 'advads_shortcode_button';
@@ -62,7 +59,6 @@ class Advanced_Ads_Shortcode_Creator {
 
 	/**
 	 * prints html select field for shortcode creator
-	 *
 	 */
 	public function get_content_for_shortcode_creator() {
 		if ( ! ( current_user_can( 'edit_posts' ) || current_user_can( 'edit_pages' ) ) ) {
@@ -86,14 +82,14 @@ class Advanced_Ads_Shortcode_Creator {
 					<option value="<?php echo $_item_id; ?>"><?php echo $_item_title; ?></option>
 					<?php endforeach; ?>
 				</optgroup>
-			<?php endif; ?>			
+			<?php endif; ?>
 			<?php if ( isset( $items['placements'] ) ) : ?>
 				<optgroup label="<?php _e( 'Placements', 'advanced-ads' ); ?>">
 					<?php foreach ( $items['placements'] as $_item_id => $_item_title ) : ?>
 					<option value="<?php echo $_item_id; ?>"><?php echo $_item_title; ?></option>
 					<?php endforeach; ?>
 				</optgroup>
-			<?php endif; ?>		
+			<?php endif; ?>
 		</select><?php
 		exit();
 	}
@@ -103,19 +99,19 @@ class Advanced_Ads_Shortcode_Creator {
 	 *
 	 * @return arr $select items for select field
 	 */
-	public static function items_for_select(){
+	public static function items_for_select() {
 		$select = array();
-		$model = Advanced_Ads::get_instance()->get_model();
+		$model  = Advanced_Ads::get_instance()->get_model();
 
 		// load all ads
 		$ads = $model->get_ads( array( 'orderby' => 'name', 'order' => 'ASC' ) );
-		foreach ( $ads as $_ad ){
+		foreach ( $ads as $_ad ) {
 			$select['ads']['ad_' . $_ad->ID] = $_ad->post_title;
 		}
 
 		// load all ad groups
 		$groups = $model->get_ad_groups();
-		foreach ( $groups as $_group ){
+		foreach ( $groups as $_group ) {
 			$select['groups']['group_' . $_group->term_id] = $_group->name;
 		}
 
@@ -132,7 +128,8 @@ class Advanced_Ads_Shortcode_Creator {
 	 * add localisation
 	 */
 	public function add_l10n( $mce_external_languages ) {
-		$mce_external_languages[ 'advads_shortcode' ] = ADVADS_BASE_PATH . 'admin/includes/shortcode-creator-l10n.php';
+		$mce_external_languages['advads_shortcode'] = ADVADS_BASE_PATH . 'admin/includes/shortcode-creator-l10n.php';
 		return $mce_external_languages;
 	}
+
 }
