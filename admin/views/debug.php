@@ -10,5 +10,5 @@
     <h2><?php _e( 'Settings', 'advanced-ads' ); ?></h2>
     <pre><?php print_r( $plugin_options ); ?></pre>
 
-    <?php do_action('advanced-ads-debug-after', $plugin_options); ?>
+    <?php do_action( 'advanced-ads-debug-after', $plugin_options ); ?>
 </div>

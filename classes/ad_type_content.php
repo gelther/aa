@@ -12,7 +12,6 @@
  * this should also work as an example for other ad types
  *
  * see also includes/ad-type-abstract.php for basic object
- *
  */
 class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 
@@ -32,9 +31,9 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		$this->title = __( 'Rich Content', 'advanced-ads' );
+		$this->title       = __( 'Rich Content', 'advanced-ads' );
 		$this->description = __( 'The full content editor from WordPress with all features like shortcodes, image upload or styling, but also simple text/html mode for scripts and code.', 'advanced-ads' );
-		$this->parameters = array(
+		$this->parameters  = array(
 			'content' => ''
 		);
 	}
@@ -49,9 +48,9 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 	 * @param obj $ad ad object
 	 * @since 1.0.0
 	 */
-	public function render_parameters($ad){
+	public function render_parameters( $ad ) {
 		// load tinymc content exitor
-		$content = (isset($ad->content)) ? $ad->content : '';
+		$content = (isset( $ad->content )) ? $ad->content : '';
 
 		/**
 		 * build the tinymc editor
@@ -59,13 +58,13 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 		 *
 		 * don’t build it when ajax is used; display message and buttons instead
 		 */
-		if ( defined( 'DOING_AJAX' ) ){ ?>
+		if ( defined( 'DOING_AJAX' ) ) { ?>
 			<textarea id="advads-ad-content-plain" style="display:none;" cols="40" rows="10" name="advanced_ad[content]"><?php echo $content; ?></textarea>
 		<?php
 		} else {
 			$args = array(
-				'textarea_name' => 'advanced_ad[content]',
-				'textarea_rows' => 10,
+				'textarea_name'    => 'advanced_ad[content]',
+				'textarea_rows'    => 10,
 				'drag_drop_upload' => true
 			);
 			wp_editor( $content, 'advanced-ad-parameters-content', $args );
@@ -75,12 +74,11 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 	/**
 	 * sanitize content field on save
 	 *
-	 * @param str $content ad content
+	 * @param  str $content ad content
 	 * @return str $content sanitized ad content
 	 * @since 1.0.0
 	 */
-	public function sanitize_content($content = ''){
-
+	public function sanitize_content( $content = '' ) {
 		// remove slashes from content
 		$content = wp_unslash( $content );
 
@@ -91,12 +89,11 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 	/**
 	 * prepare the ads frontend output
 	 *
-	 * @param obj $ad ad object
+	 * @param  obj $ad      ad object
 	 * @return str $content ad content prepared for frontend output
 	 * @since 1.0.0
 	 */
-	public function prepare_output($ad){
-
+	public function prepare_output( $ad ) {
 		// apply functions normally running through the_content filter
 		// the_content filter is not used here because it created an infinite loop (ads within ads for "before content" and other auto injections)
 		// maybe the danger is not here yet, but changing it to use the_content filter changes a lot
@@ -105,7 +102,7 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 
 		if ( isset( $GLOBALS['wp_embed'] ) ) {
 			// temporarily replace the global $post variable with the current ad (post)
-			$old_post = $GLOBALS['post'];
+			$old_post        = $GLOBALS['post'];
 			$GLOBALS['post'] = $ad->id;
 
 			// get the [embed] shortcode to run before wpautop()
@@ -124,7 +121,7 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 		$output = do_shortcode( $output );
 		$output = prepend_attachment( $output );
 		// make included images responsive, since WordPress 4.4
-		if( ! defined( 'ADVADS_DISABLE_RESPONSIVE_IMAGES' ) && function_exists( 'wp_make_content_images_responsive' ) ){
+		if ( ! defined( 'ADVADS_DISABLE_RESPONSIVE_IMAGES' ) && function_exists( 'wp_make_content_images_responsive' ) ) {
 			$output = wp_make_content_images_responsive( $output );
 		}
 

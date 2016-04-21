@@ -12,7 +12,6 @@
  * Class containing information about the adsense ad type
  *
  * see also includes/class-ad-type-abstract.php for basic object
- *
  */
 class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 
@@ -32,9 +31,9 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 	 * @since 1.4
 	 */
 	public function __construct() {
-		$this->title = __( 'AdSense ad', 'advanced-ads' );
+		$this->title       = __( 'AdSense ad', 'advanced-ads' );
 		$this->description = __( 'Use ads from your Google AdSense account', 'advanced-ads' );
-		$this->parameters = array(
+		$this->parameters  = array(
 			'content' => ''
 		);
 	}
@@ -49,59 +48,59 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 	 * @param obj $ad ad object
 	 * @since 1.4
 	 */
-	public function render_parameters($ad) {
-		$content = (string) ( isset( $ad->content ) ? $ad->content : '' );
-		$unit_id = '';
-		$unit_code = '';
-		$unit_type = '';
-		$unit_width = 0;
-		$unit_height = 0;
+	public function render_parameters( $ad ) {
+		$content      = (string) ( isset( $ad->content ) ? $ad->content : '' );
+		$unit_id      = '';
+		$unit_code    = '';
+		$unit_type    = '';
+		$unit_width   = 0;
+		$unit_height  = 0;
 		$json_content = '';
-		$unit_resize = '';
+		$unit_resize  = '';
 		$extra_params = array(
-			'default_width' => '',
+			'default_width'  => '',
 			'default_height' => '',
-			'at_media' => array(),
+			'at_media'       => array(),
 		);
 
-		$db = Advanced_Ads_AdSense_Data::get_instance();
+		$db     = Advanced_Ads_AdSense_Data::get_instance();
 		$pub_id = trim( $db->get_adsense_id() );
 
 		// check pub_id for errors
 		$pub_id_errors = false;
-		if( $pub_id !== '' && 0 !== strpos( $pub_id, 'pub-' )){
+		if ( $pub_id !== '' && 0 !== strpos( $pub_id, 'pub-' ) ) {
 			$pub_id_errors = __( 'The Publisher ID has an incorrect format. (must start with "pub-")', 'advanced-ads' );
 		}
 
-		if ( trim($content) !== '' ) {
+		if ( trim( $content ) !== '' ) {
 
 			$json_content = stripslashes( $content );
 
 			// get json content striped by slashes
 			$content = json_decode( stripslashes( $content ) );
 
-			if ( isset($content->unitType) ) {
+			if ( isset( $content->unitType ) ) {
 				$content->json = $json_content;
-				$unit_type = $content->unitType;
-				$unit_code = $content->slotId;
+				$unit_type     = $content->unitType;
+				$unit_code     = $content->slotId;
 				if ( 'responsive' !== $content->unitType ) {
 					// Normal ad unit
-					$unit_width = $ad->width;
+					$unit_width  = $ad->width;
 					$unit_height = $ad->height;
 				} else {
 					// Responsive
-					$unit_resize = (isset($content->resize)) ? $content->resize : 'auto';
+					$unit_resize = (isset( $content->resize )) ? $content->resize : 'auto';
 					if ( 'auto' != $unit_resize ) {
 						$extra_params = apply_filters( 'advanced-ads-gadsense-ad-param-data', $extra_params, $content, $ad );
 					}
 				}
-				if ( ! empty($pub_id) ) {
+				if ( ! empty( $pub_id ) ) {
 					$unit_id = 'ca-' . $pub_id . ':' . $unit_code;
 				}
 			}
 		}
 
-		if( '' === trim( $pub_id ) && '' !== trim( $unit_code ) ){
+		if ( '' === trim( $pub_id ) && '' !== trim( $unit_code ) ) {
 			$pub_id_errors = __( 'Your AdSense Publisher ID is missing.', 'advanced-ads' );
 		}
 
@@ -122,45 +121,45 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 	/**
 	 * sanitize content field on save
 	 *
-	 * @param str $content ad content
+	 * @param  str $content ad content
 	 * @return str $content sanitized ad content
 	 * @since 1.0.0
 	 */
-	public function sanitize_content($content = '') {
+	public function sanitize_content( $content = '' ) {
 		return $content = wp_unslash( $content );
 	}
 
 	/**
 	 * prepare the ads frontend output
 	 *
-	 * @param obj $ad ad object
+	 * @param  obj $ad      ad object
 	 * @return str $content ad content prepared for frontend output
 	 * @since 1.0.0
 	 */
-	public function prepare_output($ad) {
+	public function prepare_output( $ad ) {
 		global $gadsense;
 
 		$content = json_decode( stripslashes( $ad->content ) );
-		
-		if( isset( $ad->args['wp_the_query']['is_404'] ) 
-			&& $ad->args['wp_the_query']['is_404'] 
-			&& ! defined( 'ADVADS_ALLOW_ADSENSE_ON_404' ) ){
-		    return '';
+
+		if ( isset( $ad->args['wp_the_query']['is_404'] )
+			&& $ad->args['wp_the_query']['is_404']
+			&& ! defined( 'ADVADS_ALLOW_ADSENSE_ON_404' ) ) {
+			return '';
 		}
-		
-		$output = '';
-		$db = Advanced_Ads_AdSense_Data::get_instance();
-		$pub_id = $db->get_adsense_id();
+
+		$output         = '';
+		$db             = Advanced_Ads_AdSense_Data::get_instance();
+		$pub_id         = $db->get_adsense_id();
 		$limit_per_page = $db->get_limit_per_page();
 
-		if ( ! isset($content->unitType) || empty($pub_id) ) {
+		if ( ! isset( $content->unitType ) || empty( $pub_id ) ) {
 			return $output; }
 		// deprecated since the adsbygoogle.js file is now always loaded
-		if ( ! isset($gadsense['google_loaded']) || ! $gadsense['google_loaded'] ) {
+		if ( ! isset( $gadsense['google_loaded'] ) || ! $gadsense['google_loaded'] ) {
 			$gadsense['google_loaded'] = true;
 		}
 
-		if ( isset($gadsense['adsense_count']) ) {
+		if ( isset( $gadsense['adsense_count'] ) ) {
 			$gadsense['adsense_count']++;
 		} else {
 			$gadsense['adsense_count'] = 1;
@@ -181,7 +180,7 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 			$output .= '(adsbygoogle = window.adsbygoogle || []).push({}); ' . "\n";
 			$output .= '</script>' . "\n";
 		} else {
-			if ( ! isset($content->resize) || 'auto' == $content->resize ) {
+			if ( ! isset( $content->resize ) || 'auto' == $content->resize ) {
 				$this->append_defaut_responsive_content( $output, $pub_id, $content->slotId );
 			} else {
 				/**
@@ -191,7 +190,7 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 				 * The rest of the output should be appended to it.
 				 */
 				$unmodified = $output;
-				$output = apply_filters( 'advanced-ads-gadsense-responsive-output', $output, $ad, $pub_id );
+				$output     = apply_filters( 'advanced-ads-gadsense-responsive-output', $output, $ad, $pub_id );
 				if ( $unmodified == $output ) {
 					/**
 					 * If the output has not been modified, perform a default responsive output.
@@ -204,7 +203,7 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 		return $output;
 	}
 
-	protected function append_defaut_responsive_content(&$output, $pub_id, $slot_id) {
+	protected function append_defaut_responsive_content( &$output, $pub_id, $slot_id ) {
 		$output .= '<ins class="adsbygoogle" ';
 		$output .= 'style="display:block;" ';
 		$output .= 'data-ad-client="ca-' . $pub_id . '" ' . "\n";
@@ -212,7 +211,7 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 		$output .= 'data-ad-format="auto"></ins>' . "\n";
 		$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' . "\n";
 		$output .= '<script> ' . "\n";
-		$output .= apply_filters( 'advanced-ads-gadsense-responsive-adsbygoogle', '(adsbygoogle = window.adsbygoogle || []).push({}); ' . "\n");
+		$output .= apply_filters( 'advanced-ads-gadsense-responsive-adsbygoogle', '(adsbygoogle = window.adsbygoogle || []).push({}); ' . "\n" );
 		$output .= '</script>' . "\n";
 	}
 

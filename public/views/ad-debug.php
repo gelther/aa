@@ -1,6 +1,6 @@
 <div class="<?php echo $prefix; ?>addebug" style="<?php echo $style; ?>">
 <strong>ad debug output</strong>
-<?php if( $content === array() ) : ?>
+<?php if ( $content === array() ) : ?>
 <p style="color: green;">no errors found</p>
 <?php else : ?>
 <p><?php echo implode( '</p><p>', $content ); ?></p>

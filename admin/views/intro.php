@@ -2,7 +2,7 @@
 /* wp_enqueue_style( 'wp-mediaelement' );
 wp_enqueue_script( 'wp-mediaelement' );
 wp_localize_script( 'mediaelement', '_wpmejsSettings', array(
-	'pluginPath' => includes_url( 'js/mediaelement/', 'relative' ),
+	'pluginPath'        => includes_url( 'js/mediaelement/', 'relative' ),
 	'pauseOtherPlayers' => ''
 ) );
 
@@ -70,13 +70,13 @@ $minor_features = array(
 		</ul>
 		<div class="advads-admin-notice">
 		    <p>
-			<button type="button" class="button button-hero button-primary advads-notices-button-subscribe" data-notice="nl_free_addons"><?php echo __('Subscribe me now', 'advanced-ads'); ?></button>
+			<button type="button" class="button button-hero button-primary advads-notices-button-subscribe" data-notice="nl_free_addons"><?php echo __( 'Subscribe me now', 'advanced-ads' ); ?></button>
 		    </p>
 		</div>
 	    </div>
 	    <div class="col">
 		<h3>2. <?php _e( 'Create your first ad', 'advanced-ads' ); ?></h3>
-		<p><?php printf(__( 'Get started by creating an ad <a href="%1$s" target="blank">right now</a> or watch the <a href="%2$s" target="blank">tutorial video (3:29min)</a> first.', 'advanced-ads' ), admin_url( 'post-new.php?post_type=' . Advanced_Ads::POST_TYPE_SLUG ), ADVADS_URL . 'manual/first-ad/#utm_source=advanced-ads&utm_medium=link&utm_campaign=intro' ); ?></p>
+		<p><?php printf( __( 'Get started by creating an ad <a href="%1$s" target="blank">right now</a> or watch the <a href="%2$s" target="blank">tutorial video (3:29min)</a> first.', 'advanced-ads' ), admin_url( 'post-new.php?post_type=' . Advanced_Ads::POST_TYPE_SLUG ), ADVADS_URL . 'manual/first-ad/#utm_source=advanced-ads&utm_medium=link&utm_campaign=intro' ); ?></p>
 	    </div>
 	    <div class="col">
 		<h3>3. <?php _e( 'Display your ad', 'advanced-ads' ); ?></h3>
