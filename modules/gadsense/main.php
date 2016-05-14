@@ -10,12 +10,12 @@ if ( class_exists( 'Advanced_Ads', false ) ) {
 	 *
 	 * "content" key must match the id
 	 */
-	function advads_add_ad_type_adsense($types) {
+	function advads_add_ad_type_adsense( $types ) {
 		$types['adsense'] = new Advanced_Ads_Ad_Type_Adsense();
 		return $types;
 	}
 
-	function gadsense_date_time($time) {
+	function gadsense_date_time( $time ) {
 		return date_i18n( get_option( 'date_format' ), $time ) . __( ' at ', 'advanced-ads' ) . date_i18n( get_option( 'time_format' ), $time );
 	}
 
