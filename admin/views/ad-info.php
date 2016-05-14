@@ -8,7 +8,7 @@
 </div>
 </p>
 <div id="advads-ad-description">
-    <?php if ( ! empty($ad->description) ) : ?>
+    <?php if ( ! empty( $ad->description ) ) : ?>
     <p title="<?php _e( 'click to change', 'advanced-ads' ); ?>"
        onclick="advads_toggle('#advads-ad-description textarea'); advads_toggle('#advads-ad-description p')"><?php
 		echo nl2br( $ad->description ); ?></p>
