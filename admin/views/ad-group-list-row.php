@@ -15,7 +15,7 @@
         </div>
     </td>
     <td>
-        <ul><?php $_type = isset($this->types[$group->type]['title']) ? $this->types[$group->type]['title'] : 'default'; ?>
+        <ul><?php $_type = isset( $this->types[ $group->type ]['title'] ) ? $this->types[ $group->type ]['title'] : 'default'; ?>
             <li><strong><?php printf( __( 'Type: %s', 'advanced-ads' ), $_type ); ?></strong></li>
             <li><?php printf( __( 'ID: %s', 'advanced-ads' ), $group->id ); ?></li>
         </ul>
