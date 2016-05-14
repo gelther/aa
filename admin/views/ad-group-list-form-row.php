@@ -7,7 +7,7 @@
         <strong><?php _e( 'Type', 'advanced-ads' ); ?></strong>
         <ul class="advads-ad-group-type"><?php foreach ( $this->types as $_type_key => $_type ) :
 			?><li><label><input type="radio" name="advads-groups[<?php echo $group->id;
-				?>][type]" value="<?php echo $_type_key; ?>" <?php checked( $group->type, $_type_key )?>/><?php
+				?>][type]" value="<?php echo $_type_key; ?>" <?php checked( $group->type, $_type_key ); ?>/><?php
 				echo $_type['title']; ?></label>
                 <p class="description"><?php echo $_type['description']; ?></p>
             </li><?php
@@ -15,11 +15,11 @@
 	<div class="advads-ad-group-number">
 	    <label><strong><?php _e( 'Number of visible ads', 'advanced-ads' ); ?></strong>
 	    <select name="advads-groups[<?php echo $group->id; ?>][ad_count]"><?php
-		    $max = ( count( $ad_form_rows ) >= 10 ) ? count( $ad_form_rows ) + 2 : 10;
-		    for ( $i = 1; $i <= $max; $i++ ) : ?>
+			$max = ( count( $ad_form_rows ) >= 10 ) ? count( $ad_form_rows ) + 2 : 10;
+			for ( $i = 1; $i <= $max; $i++ ) : ?>
 		    <option <?php selected( $group->ad_count, $i ); ?>><?php echo $i; ?></option>
 		<?php endfor;
-		    ?><option <?php selected( $group->ad_count, 'all' ); ?> value="all"><?php _ex('all', 'option to display all ads in an ad groups', 'advanced-ads'); ?></option>
+			?><option <?php selected( $group->ad_count, 'all' ); ?> value="all"><?php _ex( 'all', 'option to display all ads in an ad groups', 'advanced-ads' ); ?></option>
 		    </select>
 	    </label>
 	    <p class="description"><?php _e( 'Number of ads that are visible at the same time', 'advanced-ads' ); ?></p>
@@ -30,7 +30,7 @@
         <table>
             <thead><tr><th><?php _e( 'Ad', 'advanced-ads' );
 			?></th><th><?php _e( 'weight', 'advanced-ads' ); ?></th></tr></thead>
-        <?php foreach ( $ad_form_rows as $_row ){
+        <?php foreach ( $ad_form_rows as $_row ) {
 			echo $_row;
 } ?></table><?php
 		else : ?>
