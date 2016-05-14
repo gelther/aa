@@ -6,8 +6,7 @@ final class Advanced_Ads_ModuleLoader {
 	protected static $textdomains = array();
 	protected static $modules = array();
 
-	public static function getLoader()
-	{
+	public static function getLoader() {
 		if ( null === self::$loader ) {
 			self::$loader = require_once ADVADS_BASE_PATH . 'vendor/autoload_52.php';
 		}
@@ -22,11 +21,11 @@ final class Advanced_Ads_ModuleLoader {
 	 * @param string $path    path to modules
 	 * @param array  $options module loader options
 	 */
-	public static function loadModules($path, $options = array()) {
+	public static function loadModules( $path, $options = array() ) {
 		$loader = self::getLoader();
 
-		$disabledModules = isset($options['disabled']) ? (array) $options['disabled'] : array();
-		$isAdmin = is_admin();
+		$disabledModules = isset( $options['disabled'] ) ? (array) $options['disabled'] : array();
+		$isAdmin         = is_admin();
 
 		// iterate modules
 		foreach ( glob( $path . '*/main.php' ) as $module ) {
@@ -37,12 +36,12 @@ final class Advanced_Ads_ModuleLoader {
 			if ( file_exists( $modulePath . '/config.php' ) ) {
 				$config = require $modulePath . '/config.php';
 				// append autoload classmap
-				if ( isset($config['classmap']) && is_array( $config['classmap'] ) ) {
+				if ( isset( $config['classmap'] ) && is_array( $config['classmap'] ) ) {
 					$loader->addClassmap( $config['classmap'] );
 				}
 				// append textdomain
-				if ( isset($config['textdomain']) && $config['textdomain'] ) {
-					self::$textdomains[$config['textdomain']] = "modules/$moduleName/languages";
+				if ( isset( $config['textdomain'] ) && $config['textdomain'] ) {
+					self::$textdomains[ $config['textdomain'] ] = "modules/$moduleName/languages";
 				}
 			}
 
@@ -52,16 +51,16 @@ final class Advanced_Ads_ModuleLoader {
 			}
 
 			// skip if disabled
-			if ( isset( $disabledModules[$moduleName] ) ) {
+			if ( isset( $disabledModules[ $moduleName ] ) ) {
 				continue ;
 			}
 
-			self::$modules[$moduleName] = $modulePath;
+			self::$modules[ $moduleName ] = $modulePath;
 		}
 
 		// register textdomains if non-empty
 		if ( self::$textdomains !== array() ) {
-			add_action( 'plugins_loaded', array( 'Advanced_Ads_ModuleLoader', 'load_module_textdomains') );
+			add_action( 'plugins_loaded', array( 'Advanced_Ads_ModuleLoader', 'load_module_textdomains' ) );
 		}
 
 		// load modules
@@ -75,4 +74,5 @@ final class Advanced_Ads_ModuleLoader {
 			load_plugin_textdomain( ADVADS_SLUG, false, ADVADS_BASE_DIR . '/languages' );
 		}
 	}
+
 }

@@ -11,7 +11,6 @@
  * Class containing information that are defaults for all the other ad types
  *
  * see ad_type_content.php for an example on ad type
- *
  */
 class Advanced_Ads_Ad_Type_Abstract {
 
@@ -65,22 +64,22 @@ class Advanced_Ads_Ad_Type_Abstract {
 	 * @param obj $ad ad object
 	 * @since 1.0.0
 	 */
-	public function render_parameters($ad){
+	public function render_parameters( $ad ) {
 		/**
-		* this will be loaded by default or using ajax when changing the ad type radio buttons
-		* echo the output right away here
-		* name parameters must be in the "advanced_ads" array
+		 * this will be loaded by default or using ajax when changing the ad type radio buttons
+		 * echo the output right away here
+		 * name parameters must be in the "advanced_ads" array
 		 */
 	}
 
 	/**
 	 * sanitize ad parameters on save
 	 *
-	 * @param arr $parameters array with ad parameters
+	 * @param  arr $parameters array with ad parameters
 	 * @return arr $parameters sanitized ad parameters
 	 * @since 1.0.0
 	 */
-	public function sanitize_parameters($parameters = array()){
+	public function sanitize_parameters( $parameters = array() ) {
 		// no specific filter for content ad parameters, because there are no
 		return $parameters;
 	}
@@ -88,12 +87,11 @@ class Advanced_Ads_Ad_Type_Abstract {
 	/**
 	 * sanitize content field on save
 	 *
-	 * @param str $content ad content
+	 * @param  str $content ad content
 	 * @return str $content sanitized ad content
 	 * @since 1.0.0
 	 */
-	public function sanitize_content($content = ''){
-
+	public function sanitize_content( $content = '' ) {
 		// remove slashes from content
 		return $content = wp_unslash( $content );
 	}
@@ -101,23 +99,22 @@ class Advanced_Ads_Ad_Type_Abstract {
 	/**
 	 * load content field for the ad
 	 *
-	 * @param obj $post WP post object
+	 * @param  obj $post    WP post object
 	 * @return str $content ad content
 	 * @since 1.0.0
 	 */
-	public function load_content($post){
-
+	public function load_content( $post ) {
 		return $post->post_content;
 	}
 
 	/**
 	 * prepare the ads frontend output
 	 *
-	 * @param obj $ad ad object
+	 * @param  obj $ad      ad object
 	 * @return str $content ad content prepared for frontend output
 	 * @since 1.0.0
 	 */
-	public function prepare_output($ad){
+	public function prepare_output( $ad ) {
 		return $ad->content;
 	}
 

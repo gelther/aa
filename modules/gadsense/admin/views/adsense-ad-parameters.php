@@ -5,13 +5,13 @@ if ( ! defined( 'WPINC' ) ) {
 $is_responsive = ('responsive' == $unit_type) ? true : false;
 $use_manual_css = ('manual' == $unit_resize) ? true : false;
 if ( $is_responsive ) {
-    echo '<style type="text/css"> #advanced-ads-ad-parameters-size {display: none;}	</style>';
+	echo '<style type="text/css"> #advanced-ads-ad-parameters-size {display: none;}	</style>';
 }
 
 $use_paste_code = true;
 $use_paste_code = apply_filters( 'advanced-ads-gadsense-use-pastecode', $use_paste_code );
 
-$db = Advanced_Ads_AdSense_Data::get_instance();
+$db           = Advanced_Ads_AdSense_Data::get_instance();
 $sizing_array = $db->get_responsive_sizing();
 
 ?>
@@ -19,29 +19,29 @@ $sizing_array = $db->get_responsive_sizing();
     <input type="hidden" id="advads-ad-content-adsense" name="advanced_ad[content]" value="<?php echo esc_attr( $json_content ); ?>" />
     <input type="hidden" name="unit_id" id="unit_id" value="<?php echo esc_attr( $unit_id ); ?>" />
     <?php
-    if ( $use_paste_code ) {
+	if ( $use_paste_code ) {
 	echo '<a class="button" href="#" id="show-pastecode-div">' . __( 'Copy&Paste existing ad code', 'advanced-ads' ) . '</a>';
-    }
-    ?>
+	}
+	?>
     <p id="adsense-ad-param-error"></p>
     <?php ob_start(); ?>
     <label>
         <?php _e( 'Ad Slot ID', 'advanced-ads' ); ?>&nbsp;:&nbsp;<input type="text" name="unit-code" id="unit-code" value="<?php echo $unit_code; ?>" />
     </label>
     <?php
-    $unit_code_markup = ob_get_clean();
-    echo apply_filters( 'advanced-ads-gadsense-unit-code-markup', $unit_code_markup, $unit_code );
-    ?>
+	$unit_code_markup = ob_get_clean();
+	echo apply_filters( 'advanced-ads-gadsense-unit-code-markup', $unit_code_markup, $unit_code );
+	?>
 	<input type="hidden" name="advanced_ad[output][adsense-pub-id]" id="advads-adsense-pub-id" value="" />
-	<?php if( $pub_id ) : ?>
-	    <p><?php printf(__( 'Publisher ID: %s', 'advanced-ads' ), $pub_id ); ?></p>
+	<?php if ( $pub_id ) : ?>
+	    <p><?php printf( __( 'Publisher ID: %s', 'advanced-ads' ), $pub_id ); ?></p>
     <?php endif; ?>
-    <?php if( $pub_id_errors ) : ?>
+    <?php if ( $pub_id_errors ) : ?>
 		<p>
             <span class="advads-error-message">
                 <?php echo $pub_id_errors; ?>
             </span>
-            <?php printf(__( 'Please <a href="%s" target="_blank">change it here</a>.', 'advanced-ads' ), admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' )); ?>
+            <?php printf( __( 'Please <a href="%s" target="_blank">change it here</a>.', 'advanced-ads' ), admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ) ); ?>
         </p>
     <?php endif; ?>
         <label id="unit-type-block">

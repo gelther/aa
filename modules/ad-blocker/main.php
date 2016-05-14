@@ -3,7 +3,7 @@ if ( class_exists( 'Advanced_Ads', false ) ) {
 
 	// only load if not already existing (maybe included from another plugin)
 	if ( defined( 'ADVADS_AB_BASE_PATH' ) ) {
-	    return ;
+		return ;
 	}
 
 	// load basic path to the plugin
@@ -13,13 +13,10 @@ if ( class_exists( 'Advanced_Ads', false ) ) {
 
 	Advanced_Ads_Ad_Blocker::get_instance();
 
-	$is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
+	$is_ajax      = defined( 'DOING_AJAX' ) && DOING_AJAX;
 	$is_main_blog = is_main_site( get_current_blog_id() );
 
 	if ( is_admin() && ! $is_ajax && $is_main_blog ) {
-	    Advanced_Ads_Ad_Blocker_Admin::get_instance();
+		Advanced_Ads_Ad_Blocker_Admin::get_instance();
 	}
 }
-
-
-

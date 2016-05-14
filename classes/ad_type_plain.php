@@ -11,7 +11,6 @@
  * Class containing information about the plain text/code ad type
  *
  * see ad-type-content.php for a better sample on ad type
- *
  */
 class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract{
 
@@ -28,9 +27,9 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract{
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		$this->title = __( 'Plain Text and Code', 'advanced-ads' );
+		$this->title       = __( 'Plain Text and Code', 'advanced-ads' );
 		$this->description = __( 'Simple text editor without any filters. You might use it to display unfiltered content, php code or javascript. Shortcodes and other WordPress content field magic does not work here.', 'advanced-ads' );
-		$this->parameters = array(
+		$this->parameters  = array(
 			'content' => ''
 		);
 	}
@@ -45,38 +44,37 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract{
 	 * @param obj $ad ad object
 	 * @since 1.0.0
 	 */
-	public function render_parameters($ad){
+	public function render_parameters( $ad ) {
 		// load content
-		$content = (isset($ad->content)) ? $ad->content : '';
+		$content = (isset( $ad->content )) ? $ad->content : '';
 
 		?><p class="description"><?php _e( 'Insert plain text or code into this field.', 'advanced-ads' ); ?></p>
 	    <textarea id="advads-ad-content-plain" cols="40" rows="10" name="advanced_ad[content]"><?php echo $content; ?></textarea>
 	    <input type="hidden" name="advanced_ad[output][allow_php]" value="0"/>
-	    <?php $this->render_php_allow($ad);
+	    <?php $this->render_php_allow( $ad );
 	}
-	
+
 	/**
 	 * render php output field
-	 * 
+	 *
 	 * @param $ad Advanced_Ads_Ad object
 	 */
-	public function render_php_allow( $ad ){
-	    
-		if( defined( 'ADVANCED_ADS_DISALLOW_PHP' ) ){
-		    return;
+	public function render_php_allow( $ad ) {
+		if ( defined( 'ADVANCED_ADS_DISALLOW_PHP' ) ) {
+			return;
 		}
-		
-		$content = (isset($ad->content)) ? $ad->content : '';
-	    
+
+		$content = (isset( $ad->content )) ? $ad->content : '';
+
 		// check if php is allowed
-		if ( isset($ad->output['allow_php']) ){
+		if ( isset( $ad->output['allow_php'] ) ) {
 			$allow_php = absint( $ad->output['allow_php'] );
 		} else {
 			/**
 			 * for compatibility for ads with php added prior to 1.3.18
-			 *  check if there is php code in the content
+			 * check if there is php code in the content
 			 */
-			if ( preg_match( '/\<\?php/', $content ) ){
+			if ( preg_match( '/\<\?php/', $content ) ) {
 				$allow_php = 1;
 			} else {
 				$allow_php = 0;
@@ -84,22 +82,20 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract{
 		}
 		?>
 		<label class="advads-ad-allow-php"><input type="checkbox" name="advanced_ad[output][allow_php]" value="1" <?php checked( 1, $allow_php ); ?>/><?php _e( 'Execute PHP code (wrapped in <code>&lt;?php ?&gt;</code>)', 'advanced-ads' ); ?></label><?php
-	    
 	}
 
 	/**
 	 * prepare the ads frontend output
 	 *
-	 * @param obj $ad ad object
+	 * @param  obj $ad      ad object
 	 * @return str $content ad content prepared for frontend output
 	 * @since 1.0.0
 	 */
-	public function prepare_output($ad){
-
+	public function prepare_output( $ad ) {
 		// evaluate the code as php if setting was never saved or is allowed
-		if ( ! defined( 'ADVANCED_ADS_DISALLOW_PHP' ) && ( ! isset($ad->output['allow_php']) || $ad->output['allow_php'] ) ){
+		if ( ! defined( 'ADVANCED_ADS_DISALLOW_PHP' ) && ( ! isset( $ad->output['allow_php'] ) || $ad->output['allow_php'] ) ) {
 			ob_start();
-			eval('?>'.$ad->content);
+			eval( '?>' . $ad->content );
 			$content = ob_get_clean();
 		} else {
 			$content = $ad->content;

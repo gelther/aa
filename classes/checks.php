@@ -12,101 +12,96 @@ class Advanced_Ads_Checks {
 	 *
 	 * @return bool true if 5.3 and higher
 	 */
-	 public static function php_version_minimum(){
-
-		if (version_compare(phpversion(), '5.3', '>=')) {
+	public static function php_version_minimum() {
+		if ( version_compare( phpversion(), '5.3', '>=' ) ) {
 			return true;
 		}
 
 		return false;
-	 }
+	}
 
 	/**
 	 * caching used
 	 *
 	 * @return bool true if active
 	 */
-	 public static function cache(){
-
-		if( ( defined( 'WP_CACHE' ) && WP_CACHE ) // general cache constant
-			|| defined('W3TC') // W3 Total Cache
+	public static function cache() {
+		if ( ( defined( 'WP_CACHE' ) && WP_CACHE ) // general cache constant
+			|| defined( 'W3TC' ) // W3 Total Cache
 			|| function_exists( 'wp_super_cache_text_domain' ) // WP SUper Cache
-			|| class_exists('zencache\\plugin') // ZenCache
-		){
+			|| class_exists( 'zencache\\plugin' ) // ZenCache
+		) {
 			return true;
 		}
 
 		return false;
-	 }
+	}
 
-	 /**
-	  * WordPress update available
-	  *
-	  * @return bool true if WordPress update available
-	  */
-	 public static function wp_update_available(){
-
+	/**
+	 * WordPress update available
+	 *
+	 * @return bool true if WordPress update available
+	 */
+	public static function wp_update_available() {
 		$update_data = wp_get_update_data();
-		$count = absint( $update_data['counts']['wordpress'] );
+		$count       = absint( $update_data['counts']['wordpress'] );
 
-		if( $count ){
+		if ( $count ) {
 			return true;
 		}
 
 		return false;
-	 }
+	}
 
-	 /**
-	  * any plugin updates available
-	  *
-	  * @return bool true if plugin updates are available
-	  */
-	 public static function plugin_updates_available(){
-
+	/**
+	 * any plugin updates available
+	 *
+	 * @return bool true if plugin updates are available
+	 */
+	public static function plugin_updates_available() {
 		$update_data = wp_get_update_data();
-		$count = absint( $update_data['counts']['plugins'] );
+		$count       = absint( $update_data['counts']['plugins'] );
 
-		if( $count ){
+		if ( $count ) {
 			return true;
 		}
 
 		return false;
-	 }
+	}
 
-	 /**
-	  * check if license keys are missing or invalid
-	  *
-	  * @since 1.6.6
-	  * @update 1.6.9 moved from Advanced_Ads_Plugin
-	  * @return true if there are missing licenses
-	  */
-	public static function licenses_invalid(){
+	/**
+	 * check if license keys are missing or invalid
+	 *
+	 * @since 1.6.6
+	 * @update 1.6.9 moved from Advanced_Ads_Plugin
+	 * @return true if there are missing licenses
+	 */
+	public static function licenses_invalid() {
+		$add_ons = apply_filters( 'advanced-ads-add-ons', array() );
 
-	    $add_ons = apply_filters( 'advanced-ads-add-ons', array() );
-	    
-	    if( $add_ons === array() ) {
-		    return false;
-	    }
+		if ( $add_ons === array() ) {
+			return false;
+		}
 
-	    foreach( $add_ons as $_add_on_key => $_add_on ){
-		    $status = Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] );
-		    
-		    // don’t check if license is valid
-		    if( $status === 'valid' ) {
-			    continue;
-		    }
+		foreach ( $add_ons as $_add_on_key => $_add_on ) {
+			$status = Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] );
 
-		    // retrieve our license key from the DB
-		    $licenses = Advanced_Ads_Admin::get_instance()->get_licenses();
+			// don’t check if license is valid
+			if ( $status === 'valid' ) {
+				continue;
+			}
 
-		    $license_key = isset($licenses[$_add_on_key]) ? $licenses[$_add_on_key] : false;
+			// retrieve our license key from the DB
+			$licenses = Advanced_Ads_Admin::get_instance()->get_licenses();
 
-		    if( ! $license_key || $status !== 'valid' ){
-			    return true;
-		    }
-	    }
+			$license_key = isset( $licenses[ $_add_on_key ] ) ? $licenses[ $_add_on_key ] : false;
 
-	    return false;
+			if ( ! $license_key || $status !== 'valid' ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -116,36 +111,35 @@ class Advanced_Ads_Checks {
 	 * @update 1.6.9 moved from Advanced_Ads_Plugin
 	 * @return true if there are expiring licenses
 	 */
-	public static function licenses_expire(){
+	public static function licenses_expire() {
+		$add_ons = apply_filters( 'advanced-ads-add-ons', array() );
 
-	    $add_ons = apply_filters( 'advanced-ads-add-ons', array() );
+		if ( $add_ons === array() ) {
+			return false;
+		}
 
-	    if( $add_ons === array() ) {
-		    return false;
-	    }
+		$now = time();
 
-	    $now = time();
+		foreach ( $add_ons as $_add_on_key => $_add_on ) {
+			// don’t display error for invalid licenses
+			if ( Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] ) === 'invalid' ) {
+				continue;
+			}
 
-	    foreach( $add_ons as $_add_on_key => $_add_on ){
-		    // don’t display error for invalid licenses
-		    if( Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] ) === 'invalid' ) {
-			    continue;
-		    }
+			$expiry_date = Advanced_Ads_Admin::get_instance()->get_license_expires( $_add_on['options_slug'] );
 
-		    $expiry_date = Advanced_Ads_Admin::get_instance()->get_license_expires( $_add_on['options_slug'] );
+			if ( $expiry_date ) {
+				$expiry_date_t = strtotime( $expiry_date );
+				$in_two_weeks  = time() + ( WEEK_IN_SECONDS * 2) ;
+				// check if expiry date is within next comming 2 weeks
+				if ( $expiry_date_t < $in_two_weeks && $expiry_date_t >= $now ) {
+					return true;
+				}
 
-		    if( $expiry_date ){
-			    $expiry_date_t = strtotime( $expiry_date );
-			    $in_two_weeks = time() + ( WEEK_IN_SECONDS * 2) ;
-			    // check if expiry date is within next comming 2 weeks
-			    if( $expiry_date_t < $in_two_weeks && $expiry_date_t >= $now ){
-				    return true;
-			    }
+			}
+		}
 
-		    }
-	    }
-
-	    return false;
+		return false;
 	}
 
 	/**
@@ -155,42 +149,40 @@ class Advanced_Ads_Checks {
 	 * @update 1.6.9 moved from Advanced_Ads_Plugin
 	 * @return true if there are expired licenses
 	 */
-	public static function licenses_expired(){
+	public static function licenses_expired() {
+		$add_ons = apply_filters( 'advanced-ads-add-ons', array() );
 
-	    $add_ons = apply_filters( 'advanced-ads-add-ons', array() );
+		if ( $add_ons === array() ) {
+			return false;
+		}
 
-	    if( $add_ons === array() ) {
-		    return false;
-	    }
+		$now = time();
 
-	    $now = time();
+		foreach ( $add_ons as $_add_on_key => $_add_on ) {
+			// don’t display error for invalid licenses
+			if ( Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] ) === 'invalid' ) {
+				continue;
+			}
 
-	    foreach( $add_ons as $_add_on_key => $_add_on ){
-		    // don’t display error for invalid licenses
-		    if( Advanced_Ads_Admin::get_instance()->get_license_status( $_add_on['options_slug'] ) === 'invalid' ) {
-			    continue;
-		    }
+			$expiry_date = Advanced_Ads_Admin::get_instance()->get_license_expires( $_add_on['options_slug'] );
 
-		    $expiry_date = Advanced_Ads_Admin::get_instance()->get_license_expires( $_add_on['options_slug'] );
+			if ( $expiry_date && strtotime( $expiry_date ) < $now ) {
+				return true;
+			}
+		}
 
-		    if( $expiry_date && strtotime( $expiry_date ) < $now ){
-			    return true;
-		    }
-	    }
-
-	    return false;
+		return false;
 	}
 
 	/**
 	 * Autoptimize plugin installed
-	 *   can change ad tags, especially inline css and scripts
+	 * can change ad tags, especially inline css and scripts
 	 *
 	 * @link https://wordpress.org/plugins/autoptimize/
 	 * @return bool true if Autoptimize is installed
 	 */
-	public static function active_autoptimize(){
-
-		if( defined( 'AUTOPTIMIZE_CACHE_DIR' ) ){
+	public static function active_autoptimize() {
+		if ( defined( 'AUTOPTIMIZE_CACHE_DIR' ) ) {
 			return true;
 		}
 
@@ -202,24 +194,22 @@ class Advanced_Ads_Checks {
 	 *
 	 * @return arr $plugins names of conflicting plugins
 	 */
-	public static function conflicting_plugins(){
-
+	public static function conflicting_plugins() {
 		$conflicting_plugins = array();
 
-		if( defined( 'Publicize_Base' )){ // JetPack Publicize module
+		if ( defined( 'Publicize_Base' ) ) { // JetPack Publicize module
 			$conflicting_plugins[] = 'Jetpack – Publicize';
 		}
 
 		return $conflicting_plugins;
 	}
-	
+
 	/**
 	 * check for potential jQuery errors
 	 * only script, so no return, but direct output
-	 * 
 	 */
-	public static function jquery_ui_conflict(){
-	    ?>
+	public static function jquery_ui_conflict() {
+		?>
 	    <div id="advads-jqueryui-conflict-message" style="display:none;" class="message error"><p><?php printf( __( 'Possible conflict between jQueryUI library, used by Advanced Ads and other libraries (probably <a href="%s">Twitter Bootstrap</a>). This might lead to misfortunate formats in forms, but should not damage features.', 'advanced-ads' ), 'http://getbootstrap.com/javascript/#js-noconflict' ); ?></p></div>
 	    <script>// string from jquery-ui source code
 		jQuery(document).ready(function(){
@@ -230,4 +220,5 @@ class Advanced_Ads_Checks {
 		});
 	    </script><?php
 	}
+
 }

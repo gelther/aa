@@ -4,7 +4,7 @@
  */
 
 /** Load WordPress dashboard API */
-require_once(ABSPATH . 'wp-admin/includes/dashboard.php');
+require_once( ABSPATH . 'wp-admin/includes/dashboard.php' );
 
 do_action( 'advanced-ads-admin-overview-before' );
 

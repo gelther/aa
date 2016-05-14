@@ -17,35 +17,29 @@ class Advanced_Ads_Model {
 	const OBJECT_CACHE_TTL = 720; // 12 Minutes
 
 	/**
-	 *
 	 * @var wpdb
 	 */
 	protected $db;
 
 	/**
-	 *
 	 * @var array
 	 */
 	protected $ad_conditions;
 
 	/**
-	 *
 	 * @var array
 	 */
 	protected $ad_placements;
 
-	public function __construct(wpdb $wpdb)
-	{
+	public function __construct( wpdb $wpdb ) {
 		$this->db = $wpdb;
 	}
 
 	/**
-	 *
 	 * @return array
 	 */
-	public function get_ad_conditions()
-	{
-		if ( ! isset(self::$ad_conditions) ) {
+	public function get_ad_conditions() {
+		if ( ! isset( self::$ad_conditions ) ) {
 			$this->ad_conditions = include ADVADS_BASE_PATH . 'includes/array_ad_conditions.php';
 		}
 
@@ -59,7 +53,7 @@ class Advanced_Ads_Model {
 	 * - not deleted
 	 *
 	 * @since    1.0.0
-	 * @return   array|false    The blog ids, false if no matches.
+	 * @return array|false The blog ids, false if no matches.
 	 */
 	public function get_blog_ids() {
 		// get an array of blog ids
@@ -72,14 +66,14 @@ class Advanced_Ads_Model {
 	 * load all ads based on WP_Query conditions
 	 *
 	 * @since 1.1.0
-	 * @param arr $args WP_Query arguments that are more specific that default
-	 * @return arr $ads array with post objects
+	 * @param  arr $args WP_Query arguments that are more specific that default
+	 * @return arr $ads  array with post objects
 	 */
-	public function get_ads($args = array()){
+	public function get_ads( $args = array() ) {
 		// add default WP_Query arguments
-		$args['post_type'] = Advanced_Ads::POST_TYPE_SLUG;
+		$args['post_type']      = Advanced_Ads::POST_TYPE_SLUG;
 		$args['posts_per_page'] = -1;
-		if ( empty($args['post_status']) ) { $args['post_status'] = 'publish'; }
+		if ( empty( $args['post_status'] ) ) { $args['post_status'] = 'publish'; }
 		$ads = new WP_Query( $args );
 
 		return $ads->posts;
@@ -89,12 +83,12 @@ class Advanced_Ads_Model {
 	 * load all ad groups
 	 *
 	 * @since 1.1.0
-	 * @param arr $args array with options
+	 * @param  arr $args   array with options
 	 * @return arr $groups array with ad groups
 	 * @link http://codex.wordpress.org/Function_Reference/get_terms
 	 */
-	public function get_ad_groups($args = array()){
-		$args['hide_empty'] = isset($args['hide_empty']) ? $args['hide_empty'] : false; // display groups without any ads
+	public function get_ad_groups( $args = array() ) {
+		$args['hide_empty'] = isset( $args['hide_empty'] ) ? $args['hide_empty'] : false; // display groups without any ads
 
 		return get_terms( Advanced_Ads::AD_GROUP_TAXONOMY, $args );
 	}
@@ -105,17 +99,17 @@ class Advanced_Ads_Model {
 	 * @since 1.1.0
 	 * @return arr $ad_placements
 	 */
-	public function get_ad_placements_array(){
-	
+	public function get_ad_placements_array() {
 		if ( ! isset( $this->ad_placements ) ) {
 			$this->ad_placements = get_option( 'advads-ads-placements', array() );
 
 			// load default array if not saved yet
-			if ( ! is_array( $this->ad_placements ) ){
+			if ( ! is_array( $this->ad_placements ) ) {
 				$this->ad_placements = array();
 			}
 		}
 
 		return $this->ad_placements;
 	}
+
 }
