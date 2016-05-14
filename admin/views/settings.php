@@ -4,14 +4,14 @@
  */
 
 // array with setting tabs for frontend
-$setting_tabs = apply_filters('advanced-ads-setting-tabs', array(
+$setting_tabs = apply_filters( 'advanced-ads-setting-tabs', array(
 	'general' => array(
-		'page' => $this->plugin_screen_hook_suffix,
+		'page'  => $this->plugin_screen_hook_suffix,
 		'group' => ADVADS_SLUG,
 		'tabid' => 'general',
 		'title' => __( 'General', 'advanced-ads' )
 	)
-));
+) );
 ?><div class="wrap">
 	<?php screen_icon(); ?>
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
